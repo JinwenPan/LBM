@@ -1,0 +1,10 @@
+sizex 400
+sizey 80
+timesteps 50000
+uin 0.02
+Re 40
+spherex 100
+spherey 40
+diameter 20
+vtk_file Re40_
+vtk_step 500
