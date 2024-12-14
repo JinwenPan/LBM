@@ -6,7 +6,7 @@
 #include <sstream>
 #include <map>
 #include <any>
-using namespace std;
+
 const double Wc = (double)4 / 9;
 const double Wn = (double)1 / 9; const double Ws = (double)1 / 9; const double Ww = (double)1 / 9; const double We = (double)1 / 9;
 const double Wnw = (double)1 / 36; const double Wne = (double)1 / 36; const double Wsw = (double)1 / 36; const double Wse = (double)1 / 36;
@@ -26,14 +26,14 @@ namespace lbm {
 	private:
 		uint xsize_;
 		uint ysize_;
-		vector<Type> data_;
+		std::vector<Type> data_;
 	};
 
 	template <typename Type, uint Cellsize>
 	Grid<Type, Cellsize>::Grid(uint xsize, uint ysize)
 		: xsize_(xsize)
 		, ysize_(ysize)
-		, data_(vector<Type>(Cellsize*xsize*ysize))
+		, data_(std::vector<Type>(Cellsize*xsize*ysize))
 	{}
 
 	template <typename Type, uint Cellsize>
@@ -321,38 +321,38 @@ namespace lbm {
 		}
 	}
 //===================================================== VTK Writer ==============================================================
-	void write_vtk(const string vtk_file,const Density_Field& grid_density, const Velocity_Field& grid_velocity, const Flag_Field& grid_flag,uint gridsizex, uint gridsizey, uint i){
+	void write_vtk(const std::string vtk_file,const Density_Field& grid_density, const Velocity_Field& grid_velocity, const Flag_Field& grid_flag,uint gridsizex, uint gridsizey, uint i){
 
-		string file= vtk_file+to_string(i)+".vtk";
-			ofstream ofso(file);
-		ofso << "# vtk DataFile Version 3.0" << endl;
-		ofso << "SiWiRVisFile" << endl;
-		ofso << "ASCII" << endl;
-		ofso << "DATASET STRUCTURED_POINTS" << endl;
-		ofso << "DIMENSIONS " << gridsizex-2 <<" "<<gridsizey-2<<" "<< 1 <<endl;    
-		ofso << "ORIGIN " << 0 <<" "<<0<<" "<<0<<endl;
-		ofso << "SPACING "<< 1 <<" "<<1<<" "<<1<<endl;
-		ofso << "POINT_DATA "<<(gridsizex-2)*(gridsizey-2)<<endl;                    
-		ofso << "SCALARS flags unsigned_int 1"<<endl;
-		ofso <<"LOOKUP_TABLE default"<<endl;
+		std::string file= vtk_file+std::to_string(i)+".vtk";
+			std::ofstream ofso(file);
+		ofso << "# vtk DataFile Version 3.0" << std::endl;
+		ofso << "SiWiRVisFile" << std::endl;
+		ofso << "ASCII" << std::endl;
+		ofso << "DATASET STRUCTURED_POINTS" << std::endl;
+		ofso << "DIMENSIONS " << gridsizex-2 <<" "<<gridsizey-2<<" "<< 1 <<std::endl;    
+		ofso << "ORIGIN " << 0 <<" "<<0<<" "<<0<<std::endl;
+		ofso << "SPACING "<< 1 <<" "<<1<<" "<<1<<std::endl;
+		ofso << "POINT_DATA "<<(gridsizex-2)*(gridsizey-2)<<std::endl;                    
+		ofso << "SCALARS flags unsigned_int 1"<<std::endl;
+		ofso <<"LOOKUP_TABLE default"<<std::endl;
 		for (uint j =1; j< gridsizey-1; ++j) {                              
 			for(uint i = 1; i < gridsizex-1; ++i) {
-				ofso << grid_flag(i,j,0) <<endl;
+				ofso << grid_flag(i,j,0) <<std::endl;
 			}
 		}	
-		ofso << "SCALARS density double 1"<<endl;
-		ofso <<"LOOKUP_TABLE default"<<endl;
+		ofso << "SCALARS density double 1"<<std::endl;
+		ofso <<"LOOKUP_TABLE default"<<std::endl;
 		for (uint j = 1; j< gridsizey-1; ++j) {                       
 			for(uint i = 1; i < gridsizex-1; ++i) {
-				ofso << grid_density(i,j,0) <<endl;
+				ofso << grid_density(i,j,0) <<std::endl;
 		
 			}
 		}
 
-		ofso << "VECTORS velocity double"<<endl;
+		ofso << "VECTORS velocity double"<<std::endl;
 		for (uint j = 1; j< gridsizey-1; ++j) {
 			for(uint i = 1; i < gridsizex-1; ++i) {
-			ofso << grid_velocity(i,j,0) <<" "<<grid_velocity(i,j,1)<<" "<<0<<endl;
+			ofso << grid_velocity(i,j,0) <<" "<<grid_velocity(i,j,1)<<" "<<0<<std::endl;
 			}
 		}	
 	}
@@ -390,10 +390,10 @@ class Filereader{
 //===============================================LBM Algorithm============================================================
 int main(int argc, char* argv[]) {
 	if(argc<2){
-		cout<<"No paramter file specified"<<endl;
+		std::cout<<"No paramter file specified"<<std::endl;
 		return 0;
 	}
-	string filename = argv[1];
+	std::string filename = argv[1];
 	Filereader reader;
 	reader.readfile(filename);
 	using namespace lbm;
@@ -409,7 +409,7 @@ int main(int argc, char* argv[]) {
 	uint spherex = reader.getparam<uint>("spherex");
 	uint spherey = reader.getparam<uint>("spherey");
 	uint diameter = reader.getparam<uint>("diameter");
-	string vtk_file = reader.getparam<string>("vtk_file");
+	std::string vtk_file = reader.getparam<std::string>("vtk_file");
 	uint vtk_step = reader.getparam<uint>("vtk_step");
 
 	Flag_Field grid_flag(gridsizex, gridsizey);
@@ -432,7 +432,7 @@ int main(int argc, char* argv[]) {
 		Pulling(grid_pdf_dest,grid_pdf,grid_flag,gridsizex,gridsizey);
 		swap(grid_pdf,grid_pdf_dest);
 		if (i%vtk_step==0){
-			cout<< i <<endl;
+			std::cout<< i <<std::endl;
 			write_vtk(vtk_file,grid_density,grid_velocity,grid_flag,gridsizex,gridsizey,i);
 		}
 	}
